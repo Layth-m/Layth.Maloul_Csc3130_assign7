@@ -5,13 +5,17 @@ import java.util.Map;
 //only does text output
 
 public class draw_graph {
+
+    static Map<Character, Integer> connections;
+
     public static void main(String[] args) {
         //test input
         String input = "[(I,2),(A,5),(E,4),(F,1),(T,2),(S,3)]";
-        Map<Character, Integer> connections = parseInput(input);
+        connections = parseInput(input);
         drawGraph(connections);
-
+        printAsMatrix();
     }
+
     private static Map<Character, Integer> parseInput(String input) {
         Map<Character, Integer> connections = new HashMap<>();
         // Remove square brackets and spaces
@@ -68,5 +72,42 @@ public class draw_graph {
         return -1; // Vertex not found
     }
 
+    public static void printAsMatrix() {
+        System.out.println("Here is the list as a matrix.");
+        int n = connections.size();
+        char[] vertices = new char[n];
+        int[][] matrix = new int[n][n];
+
+        // Populate the vertices array
+        int i = 0;
+        for (char vertex : connections.keySet()) {
+            vertices[i] = vertex;
+            i++;
+        }
+
+        // Populate the adjacency matrix
+        for (Map.Entry<Character, Integer> entry : connections.entrySet()) {
+            char vertex = entry.getKey();
+            int index = getIndex(connections, vertex);
+            int weight = entry.getValue();
+            char leftVertex = getVertex(connections, vertex, -weight);
+            char rightVertex = getVertex(connections, vertex, weight);
+            if (leftVertex != '\0') {
+                matrix[index][getIndex(connections, leftVertex)] = 1;
+            }
+            if (rightVertex != '\0') {
+                matrix[index][getIndex(connections, rightVertex)] = 1;
+            }
+        }
+
+        // Print the adjacency matrix
+        for (i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 
 }
+
